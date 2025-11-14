@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CRMProvider } from './context/CRMContext';
+import { ToastProvider } from './context/ToastContext';
 import Layout from './components/Layout';
 import KanbanBoard from './components/KanbanBoard';
 import Dashboard from './components/Dashboard';
@@ -71,11 +72,13 @@ function App() {
   };
 
   return (
-    <CRMProvider>
-      <Layout currentView={currentView} onViewChange={setCurrentView}>
-        {renderView()}
-      </Layout>
-    </CRMProvider>
+    <ToastProvider>
+      <CRMProvider>
+        <Layout currentView={currentView} onViewChange={setCurrentView}>
+          {renderView()}
+        </Layout>
+      </CRMProvider>
+    </ToastProvider>
   );
 }
 

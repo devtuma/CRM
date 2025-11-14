@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useCRM } from '../context/CRMContext';
 import { Phone, Mail, MessageCircle, Users, FileText, Plus } from 'lucide-react';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 interface InteractionHistoryProps {
   leadId: string;
@@ -151,7 +150,7 @@ const InteractionHistory: React.FC<InteractionHistoryProps> = ({ leadId }) => {
                       </span>
                     </div>
                     <span className="text-sm text-gray-500">
-                      {format(new Date(interaction.date), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                      {format(new Date(interaction.date), "dd/MM/yyyy 'às' HH:mm")}
                     </span>
                   </div>
                   <p className="text-gray-700 whitespace-pre-wrap">{interaction.content}</p>

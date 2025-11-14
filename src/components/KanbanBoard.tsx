@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { useCRM } from '../context/CRMContext';
 import { Lead } from '../types';
@@ -6,6 +6,7 @@ import { Plus, Settings } from 'lucide-react';
 import LeadCard from './LeadCard';
 import LeadModal from './LeadModal';
 import StageSettings from './StageSettings';
+import SearchBar, { FilterOptions } from './SearchBar';
 import { formatCurrency } from '../utils/calculations';
 
 const KanbanBoard: React.FC = () => {
@@ -14,6 +15,8 @@ const KanbanBoard: React.FC = () => {
   const [isAddingLead, setIsAddingLead] = useState(false);
   const [newLeadStageId, setNewLeadStageId] = useState<string | null>(null);
   const [showStageSettings, setShowStageSettings] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState<FilterOptions>({ priority: 'all' });
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -25,8 +28,45 @@ const KanbanBoard: React.FC = () => {
     moveLead(leadId, newStageId);
   };
 
+  // Filter leads based on search and filters
+  const filteredLeads = useMemo(() => {
+    return leads.filter(lead => {
+      // Search filter
+      if (searchTerm) {
+        const term = searchTerm.toLowerCase();
+        const matchesSearch =
+          lead.name.toLowerCase().includes(term) ||
+          lead.email.toLowerCase().includes(term) ||
+          lead.company?.toLowerCase().includes(term) ||
+          lead.phone.includes(term);
+
+        if (!matchesSearch) return false;
+      }
+
+      // Priority filter
+      if (filters.priority && filters.priority !== 'all' && lead.priority !== filters.priority) {
+        return false;
+      }
+
+      // Value range filter
+      if (filters.minValue && lead.value < filters.minValue) {
+        return false;
+      }
+      if (filters.maxValue && lead.value > filters.maxValue) {
+        return false;
+      }
+
+      // Assigned to filter
+      if (filters.assignedTo && !lead.assignedTo.toLowerCase().includes(filters.assignedTo.toLowerCase())) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [leads, searchTerm, filters]);
+
   const getLeadsByStage = (stageId: string): Lead[] => {
-    return leads.filter(lead => lead.stageId === stageId);
+    return filteredLeads.filter(lead => lead.stageId === stageId);
   };
 
   const getStageTotal = (stageId: string): number => {
@@ -40,15 +80,19 @@ const KanbanBoard: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4 px-4 pt-4">
-        <h2 className="text-2xl font-bold text-gray-800">Funil de Vendas</h2>
-        <button
-          onClick={() => setShowStageSettings(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
-        >
-          <Settings size={18} />
-          Configurar Etapas
-        </button>
+      <div className="px-4 pt-4 space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-gray-800">Funil de Vendas</h2>
+          <button
+            onClick={() => setShowStageSettings(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+          >
+            <Settings size={18} />
+            Configurar Etapas
+          </button>
+        </div>
+
+        <SearchBar onSearch={setSearchTerm} onFilter={setFilters} />
       </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>

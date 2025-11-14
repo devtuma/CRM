@@ -3,7 +3,6 @@ import { Lead } from '../types';
 import { Building2, Mail, Phone, Calendar, DollarSign, User } from 'lucide-react';
 import { formatCurrency } from '../utils/calculations';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 interface LeadCardProps {
   lead: Lead;
@@ -66,7 +65,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, isDragging }) => {
           <div className="flex items-center text-xs text-gray-500">
             <Calendar size={12} className="mr-1" />
             <span>
-              Prev: {format(new Date(lead.expectedCloseDate), 'dd/MM/yyyy', { locale: ptBR })}
+              Prev: {format(new Date(lead.expectedCloseDate), 'dd/MM/yyyy')}
             </span>
           </div>
         )}
@@ -92,7 +91,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, isDragging }) => {
           <User size={12} className="mr-1" />
           <span>{lead.assignedTo}</span>
         </div>
-        <span>{format(new Date(lead.createdAt), 'dd/MM', { locale: ptBR })}</span>
+        <span>{format(new Date(lead.createdAt), 'dd/MM')}</span>
       </div>
     </div>
   );

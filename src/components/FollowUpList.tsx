@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useCRM } from '../context/CRMContext';
 import { Plus, Check, Clock, AlertCircle, Calendar, Phone, Mail, MessageCircle, Users } from 'lucide-react';
 import { format, isPast, isToday } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 interface FollowUpListProps {
   leadId: string;
@@ -226,7 +225,7 @@ const FollowUpList: React.FC<FollowUpListProps> = ({ leadId }) => {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-600">
-                        {format(new Date(followUp.dueDate), 'dd/MM/yyyy', { locale: ptBR })}
+                        {format(new Date(followUp.dueDate), 'dd/MM/yyyy')}
                       </span>
                       {!followUp.completed && (
                         <button
@@ -243,7 +242,7 @@ const FollowUpList: React.FC<FollowUpListProps> = ({ leadId }) => {
                   )}
                   {followUp.completed && followUp.completedAt && (
                     <p className="text-sm text-green-600 mt-2">
-                      ✓ Concluído em {format(new Date(followUp.completedAt), 'dd/MM/yyyy', { locale: ptBR })}
+                      ✓ Concluído em {format(new Date(followUp.completedAt), 'dd/MM/yyyy')}
                     </p>
                   )}
                 </div>

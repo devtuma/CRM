@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Lead, Stage, Interaction, WhatsAppTemplate, FollowUp, User } from '../types';
 import { storage } from '../utils/storage';
 import { checkAutomationRules, getDefaultAutomationRules, AutomationRule } from '../utils/automation';
+import { initializeDemoData } from '../utils/demoData';
 
 interface CRMContextType {
   // State
@@ -67,6 +68,9 @@ export const CRMProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // Load data from localStorage on mount
   useEffect(() => {
+    // Initialize demo data if first time
+    initializeDemoData();
+
     setLeads(storage.getLeads());
     setStages(storage.getStages());
     setInteractions(storage.getInteractions());
